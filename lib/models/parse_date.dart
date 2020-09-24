@@ -34,10 +34,7 @@ String parseDateToHebrew(String date) {
       date.substring(0, 4);
 }
 
-bool canRegisterToDay(DateTime other) {
-  Duration difference = other.difference(DateTime.now());
-  return (difference.inMinutes - 180 > 0);
-}
+
 
 bool isUpComing(String dateString) {
   if (DateTime.parse(dateString).difference(DateTime.now()).inMinutes > 0) {

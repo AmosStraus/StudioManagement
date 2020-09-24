@@ -1,4 +1,4 @@
-# state_management_ex1
+# green_rhino
 
 Studio Management Application for Karnaf Yarok - JiuJitsu and Matrial Arts
 

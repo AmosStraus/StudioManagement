@@ -104,8 +104,11 @@ class AuthService {
 
     bool newUser = false;
     await reportRef.get().then((snapshot) {
-      print((snapshot.data()['classHistory']));
-      if (snapshot.data()['classHistory'] == null) {
+      if (!snapshot.exists) {
+        print("registered new user1");
+        newUser = true;
+      } else if (snapshot.data()['classHistory'] == null) {
+        print("registered new user1");
         newUser = true;
       }
     });

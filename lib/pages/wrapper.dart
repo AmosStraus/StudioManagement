@@ -9,7 +9,7 @@ class Wrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context); // access user data via user stream
     // return Home or Authenticate widget
-    if (user?.displayName == null) {
+    if (user == null) {
       return Authenticate();
     } else {
       return HomePageCalendar();
