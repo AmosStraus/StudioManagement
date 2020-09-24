@@ -35,7 +35,6 @@ dependencies:
 
   flutter_svg: ^0.19.0
   flutter_auth_buttons: ^0.10.0
-  url_launcher: ^5.7.0
 
 
   cupertino_icons: ^0.1.3

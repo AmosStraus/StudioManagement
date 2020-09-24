@@ -41,7 +41,7 @@ class _CalendarTabState extends State<CalendarTab>
                     color: Colors.blue[200],
                   ),
                   child: Text(
-                      "שיעורים בתאריך: ${parseDateToHebrew(myModel.dateString)}",
+                      "בתאריך: ${parseDateToHebrew(myModel.dateString)}",
                       style: TextStyle(fontSize: 18.0)),
                 ),
               ],
