@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:state_management_ex1/models/parse_date.dart';
 
 class MessagesTab extends StatefulWidget {
   MessagesTab({
@@ -47,17 +46,33 @@ class _MessagesTabState extends State<MessagesTab>
       },
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
-
-        final notification = message['data'];
+        final notification = message['notification'];
+        await FirebaseFirestore.instance
+            .collection('Messages')
+            .doc((DateTime.now().toString()))
+            .set({
+          'title': notification['title'],
+          'body': notification['body'],
+        });
         setState(() {
           messages.add(Message(
-            title: '${notification['title']}',
-            body: '${notification['body']}',
-          ));
+              title: notification['title'], body: notification['body']));
         });
       },
       onResume: (Map<String, dynamic> message) async {
         print("onResume: $message");
+        final notification = message['notification'];
+        await FirebaseFirestore.instance
+            .collection('Messages')
+            .doc((DateTime.now().toString()))
+            .set({
+          'title': notification['title'],
+          'body': notification['body'],
+        });
+        setState(() {
+          messages.add(Message(
+              title: notification['title'], body: notification['body']));
+        });
       },
     );
   }
@@ -79,7 +94,6 @@ class _MessagesTabState extends State<MessagesTab>
           builder:
               (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
             if (snapshot.hasData) {
-              print(snapshot.data);
               return ListView.builder(
                 shrinkWrap: true,
                 itemBuilder: (context, position) => Container(
@@ -112,7 +126,7 @@ class _MessagesTabState extends State<MessagesTab>
                 itemCount: snapshot.data?.length ?? 1,
               );
             } else {
-              return Text("אין הודעות");
+              return Text("");
             }
           },
         ),

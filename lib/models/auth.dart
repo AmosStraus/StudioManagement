@@ -147,21 +147,16 @@ class AuthService {
         .collection('Reports')
         .doc("${getUser.displayName}_${getUser.uid}");
 
+    FieldValue Function(List<dynamic>) addOrRemove =
+        register ? FieldValue.arrayUnion : FieldValue.arrayRemove;
+
     await DataFromServerInit.updateServerOnRegistration(
         activity.dateString, activity, register, getUser);
 
-    if (register) {
-      await reportClassRef.update({
-        'classHistory': FieldValue.arrayUnion([
-          {'${activity.rawDate}': "${activity.dateString}_${activity.name}"}
-        ])
-      });
-    } else {
-      await reportClassRef.update({
-        'classHistory': FieldValue.arrayRemove([
-          {'${activity.rawDate}': "${activity.dateString}_${activity.name}"}
-        ])
-      });
-    }
+    await reportClassRef.update({
+      'classHistory': addOrRemove([
+        {'${activity.rawDate}': "${activity.dateString}_${activity.name}"}
+      ])
+    });
   }
 }

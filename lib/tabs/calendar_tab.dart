@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'package:state_management_ex1/models/data_from_server.dart';
+import 'package:state_management_ex1/activities/calendar_activities.dart';
 import 'package:state_management_ex1/models/parse_date.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -32,25 +31,7 @@ class _CalendarTabState extends State<CalendarTab>
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                "${welcomeString.substring(0, welcomeString.length > 20 ? 20 : welcomeString.length)}",
-                style: TextStyle(fontSize: 20.0),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  color: Colors.blue[200],
-                ),
-                child: Text(
-                    "בתאריך: ${parseDateToHebrew(rawDateToDateString(rawCurrDate))}",
-                    style: TextStyle(fontSize: 18.0)),
-              ),
-            ],
-          ),
+          HeadLiner(rawCurrDate: rawCurrDate, welcomeString: welcomeString),
           TableCalendar(
             initialCalendarFormat: CalendarFormat.week,
             // availableCalendarFormats: const {CalendarFormat.week: ""},
@@ -77,15 +58,47 @@ class _CalendarTabState extends State<CalendarTab>
               });
             },
           ),
-          //  DataFromServer1.activeDB.doc(myModel.dateString).collection('classes').get().then((snapshot) {
-          // snapshot.docs.map((e) => Activity.fromSnapshot(e)).toList()
           Expanded(
-            child: DataFromServer(
+            child: CalendarDayBuilder(
               rawDate: _calendarController.focusedDay ?? DateTime.now(),
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class HeadLiner extends StatelessWidget {
+  const HeadLiner({
+    Key key,
+    @required this.rawCurrDate,
+    @required this.welcomeString,
+  }) : super(key: key);
+
+  final DateTime rawCurrDate;
+  final String welcomeString;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(50),
+            color: Colors.blue[200],
+          ),
+          child: Text(
+              "בתאריך: ${parseDateToHebrew(rawDateToDateString(rawCurrDate))}",
+              style: TextStyle(fontSize: 18.0)),
+        ),
+        Text(
+          "${welcomeString.substring(0, welcomeString.length > 20 ? 20 : welcomeString.length)}",
+          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 }

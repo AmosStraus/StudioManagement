@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:state_management_ex1/activities/upComingActivityCard.dart';
@@ -115,7 +114,6 @@ class _HistoryTabState extends State<HistoryTab> with TickerProviderStateMixin {
     // first element is DATE
     // second is the name of activity
     upcomingList = mapFromServer.map((pair) {
-      print(pair.values.first);
       if (isUpComing(pair.keys.first)) {
         return pair.values.first;
       }
