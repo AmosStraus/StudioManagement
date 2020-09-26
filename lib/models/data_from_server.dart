@@ -288,7 +288,7 @@ class DataFromServerInit {
           snapshot.docs.forEach((element) {
             if (!element
                 .data()["name"]
-                .contains(new RegExp(r'(class_slot_|FREE)'))) {
+                .contains(RegExp(r'(class_slot_|FREE)'))) {
               temp.add(Activity.fromSnapshot(element));
             }
           });

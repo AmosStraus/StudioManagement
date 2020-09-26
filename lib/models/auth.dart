@@ -54,14 +54,9 @@ class AuthService {
   // register with mail
   Future<User> registerWithEmailAndPassword(
       String email, String password, String name) async {
-    print('$name - $email - $password');
-
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-
-      print(result.user.displayName);
-      print(name);
 
       // Update user data
       await createUserWithData(result.user, name);

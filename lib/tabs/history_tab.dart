@@ -2,21 +2,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:provider/provider.dart';
 import 'package:state_management_ex1/activities/upComingActivityCard.dart';
 import 'package:state_management_ex1/models/parse_date.dart';
 import 'package:state_management_ex1/shared/constant.dart';
 
 class HistoryTab extends StatefulWidget {
+  final user;
   HistoryTab({
     Key key,
+    this.user,
   }) : super(key: key);
 
   @override
   _HistoryTabState createState() => _HistoryTabState();
 }
 
-class _HistoryTabState extends State<HistoryTab> {
+class _HistoryTabState extends State<HistoryTab> with TickerProviderStateMixin {
   var dateString = "";
   var className = "";
   List<dynamic> upcomingList;
@@ -102,12 +103,9 @@ class _HistoryTabState extends State<HistoryTab> {
   }
 
   Stream<List<dynamic>> getUpcomingClassList(context) async* {
-    final user = Provider.of<User>(context,
-        listen: false); // access user data via user stream
-
     var mapFromServer = await FirebaseFirestore.instance
         .collection('Reports')
-        .doc("${user.displayName}_${user.uid}")
+        .doc("${widget.user.displayName}_${widget.user.uid}")
         .get()
         .then((snapshot) {
       return snapshot.data()['classHistory'].map((t) => t).toList();

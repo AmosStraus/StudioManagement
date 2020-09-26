@@ -22,7 +22,6 @@ class _CalendarTabState extends State<CalendarTab>
   void initState() {
     super.initState();
     rawCurrDate = DateTime.now();
-    print(rawCurrDate);
   }
 
   @override

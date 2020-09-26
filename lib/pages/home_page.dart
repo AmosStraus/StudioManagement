@@ -18,6 +18,7 @@ class HomePageCalendar extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.green[100],
         appBar: AppBar(
+          elevation: 0,
           centerTitle: true,
           backgroundColor: Colors.green,
           title: Text(
@@ -46,7 +47,7 @@ class HomePageCalendar extends StatelessWidget {
         body: TabBarView(
           children: <Widget>[
             CalendarTab(),
-            HistoryTab(),
+            HistoryTab(user: _auth.getUser),
             MessagesTab(),
           ],
         ),

@@ -104,8 +104,7 @@ class _LoginState extends State<Login> {
                     ),
                     GoogleSignInButton(
                       onPressed: () async {
-                        var user = await _auth.googleSignIn();
-                        print(user);
+                        await _auth.googleSignIn();
                       },
                     ),
                     SizedBox(

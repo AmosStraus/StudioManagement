@@ -122,8 +122,7 @@ class _RegisterState extends State<Register> {
                     ),
                     GoogleSignInButton(
                       onPressed: () async {
-                        var user = await _auth.googleSignIn();
-                        print(user);
+                        await _auth.googleSignIn();
                       },
                     ),
                     Text(error,
