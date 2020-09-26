@@ -71,6 +71,43 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707690108957:android:a06d024c25cbc056f6cef4",
+        "android_client_info": {
+          "package_name": "com.karnafYarok"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "707690108957-gvms8b3mfnult7hkobf2ldd96su6atl1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.karnafYarok",
+            "certificate_hash": "90fe7fa13b77cee7e807304f8ad83794c5bfa9f2"
+          }
+        },
+        {
+          "client_id": "707690108957-0kd6jjnkgleqka3fbkq1ejrggavqr9le.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAU13S06Rh4xpy27TysuMxAPfp-osq6Eto"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "707690108957-0kd6jjnkgleqka3fbkq1ejrggavqr9le.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

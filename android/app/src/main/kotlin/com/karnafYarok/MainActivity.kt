@@ -1,4 +1,4 @@
-package com.example.state_management_ex1
+package com.karnafYarok
 
 import io.flutter.embedding.android.FlutterActivity
 
