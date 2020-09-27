@@ -271,28 +271,28 @@ class DataFromServerInit {
   static final holidayDB = FirebaseFirestore.instance.collection('Holidays');
   static final schedulerDB = FirebaseFirestore.instance.collection('Scheduler');
 
-  static loadScheduler() async {
-    final schedulerDB = FirebaseFirestore.instance.collection('Scheduler');
-    for (int i = 0; i < 7; ++i) {
-      final List<Activity> temp = [];
-      await schedulerDB
-          .doc('$i ${intToDay(i)}')
-          .collection("classes")
-          .get()
-          .then((snapshot) {
-        if (!snapshot.docs.every(
-            (element) => element.data()["name"].contains("class_slot_"))) {
-          snapshot.docs.forEach((element) {
-            if (!element
-                .data()["name"]
-                .contains(RegExp(r'(class_slot_|FREE)'))) {
-              temp.add(Activity.fromSnapshot(element));
-            }
-          });
-        }
-      });
-      schedulerRT[i] = temp;
-    }
+  static Future<List<Activity>> loadScheduler(
+      int dayInt, DateTime actualDate) async {
+    // final schedulerDB = FirebaseFirestore.instance.collection('Scheduler');
+    // for (int i = 0; i < 7; ++i) {
+    final List<Activity> temp = [];
+    await schedulerDB
+        .doc('$dayInt ${intToDay(dayInt)}')
+        .collection("classes")
+        .get()
+        .then((snapshot) {
+      if (!snapshot.docs.every((element) =>
+          element.data()["name"].contains(r'(class_slot_|FREE)'))) {
+        snapshot.docs.forEach((element) {
+          if (!element.data()["name"].contains(RegExp(r'(class_slot_|FREE)'))) {
+            temp.add(Activity.fromSnapshotWithDate(element.data(), actualDate));
+          }
+        });
+      }
+      return temp;
+    });
+    return temp;
+    // }
   }
 
   static pushScheduler() {
@@ -323,43 +323,56 @@ class DataFromServerInit {
   static loadDB() async {
     // The idea here is to set the next 60 days but not overwrite existing days
     // Also considers Holidays that were stated in the Firebase
+    DateTime latesetUpdate;
+    DateTime loadUntill = DateTime.now().add(Duration(days: 60));
 
-    for (var i = 0; i < DAYS_TO_LOAD; i++) {
-      DateTime currentDate = DateTime.now().add(Duration(days: i));
-      String dateString = currentDate.toString().substring(0, 10);
-      final dailyActivities = [];
+    await schedulerDB.doc('latest_update').get().then((snapshot) =>
+        latesetUpdate = snapshot.data()['latest_update'].toDate());
 
-      await activeDB.doc(dateString).get().then((snapshot) {
-        if (!snapshot.exists) {
-          if (schedulerRT[weekDayIL(currentDate.weekday)] != null) {
-            for (var activity in schedulerRT[weekDayIL(currentDate.weekday)]) {
-              dailyActivities.add(Activity.withHour(activity, currentDate));
-            }
-          } else {
-            dailyActivities.add(Activity.withHour(
-                schedulerRT[0][0], currentDate)); // class_slot_holiday
-          }
-          for (var activity in dailyActivities) {
-            activeDB.doc(dateString).set({
-              'week day': activity.weekDay,
-              'active day': activity.name != "No Activity",
-              'date': activity.dateString,
+    print(latesetUpdate);
+    final daysToLoad = loadUntill.difference(latesetUpdate).inDays;
+    if (daysToLoad > 0) {
+      for (var i = 0; i < daysToLoad; i++) {
+        DateTime currentDate = latesetUpdate.add(Duration(days: i));
+        String dateString = currentDate.toString().substring(0, 10);
+        List<Activity> dailyActivities = [];
+        print(currentDate);
+
+        // await activeDB.doc(dateString).get().then((snapshot) async {
+        //   if (!snapshot.exists) {
+        print("adding");
+        dailyActivities =
+            await loadScheduler(weekDayIL(currentDate.weekday), currentDate);
+        print('${intToDay(weekDayIL(currentDate.weekday))} $dailyActivities');
+        if (dailyActivities == null) {
+          dailyActivities = [
+            (Activity.withHour(schedulerLocal[0][0], currentDate))
+          ]; // class_slot_holiday
+        }
+        for (var activity in dailyActivities) {
+          activeDB.doc(dateString).set({
+            'week day': activity.weekDay,
+            'active day': activity.name != "No Activity",
+            'date': activity.dateString,
+          }, SetOptions(merge: true));
+          if (activity.name != "No Activity") {
+            activeDB
+                .doc(dateString)
+                .collection('classes')
+                .doc(activity.name)
+                .set({
+              'name': activity.name,
+              'rawDate': activity.rawDate,
+              'duration': activity.duration.inMinutes,
+              'maxRegistered': activity.maxRegistered,
+              'registeredUsers': activity.registeredUsers
             }, SetOptions(merge: true));
-            if (activity.name != "No Activity") {
-              activeDB
-                  .doc(dateString)
-                  .collection('classes')
-                  .doc(activity.name)
-                  .set({
-                'name': activity.name,
-                'rawDate': activity.rawDate,
-                'duration': activity.duration.inMinutes,
-                'maxRegistered': activity.maxRegistered
-              }, SetOptions(merge: true));
-            }
           }
         }
-      });
+        // }
+        // });
+      }
+      schedulerDB.doc('latest_update').set({'latest_update': loadUntill});
     }
   }
 

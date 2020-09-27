@@ -50,7 +50,7 @@ class _CalendarDayBuilderState extends State<CalendarDayBuilder> {
         .get()
         .then((snapshot) {
       dailyActivities = snapshot.docs
-          .map((spElement) => Activity.fromSnapshot(spElement))
+          .map((spElement) => Activity.fromSnapshot(spElement.data()))
           .toList();
     });
     yield dailyActivities;

@@ -10,7 +10,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   // await DataFromServerInit.pushScheduler();
-  await DataFromServerInit.loadScheduler();
+  // await DataFromServerInit.loadScheduler();
   await DataFromServerInit.loadDB();
   // PushNotificationService _pns = PushNotificationService();
   // await _pns.initialize();
@@ -20,17 +20,8 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        // ChangeNotifierProvider<MyModel>(
-        //   create: (BuildContext context) {
-        //     return MyModel();
-        //   },
-        // ),
-        StreamProvider<User>.value(
-          value: AuthService().user,
-        ),
-      ],
+    return StreamProvider<User>.value(
+      value: AuthService().user,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Wrapper(),

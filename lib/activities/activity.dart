@@ -24,11 +24,21 @@ class Activity {
     registeredUsers = activity.registeredUsers;
   }
 
-  Activity.fromSnapshot(element) {
-    var snapshotData = element.data();
+  Activity.fromSnapshot(snapshotData) {
     name = snapshotData['name'];
     duration = Duration(minutes: snapshotData['duration'] ?? 60);
     rawDate = snapshotData['rawDate'].toDate() ?? DateTime.now();
+    maxRegistered = snapshotData['maxRegistered'] ?? 20;
+    registeredUsers = snapshotData['registeredUsers'] ?? [];
+  }
+
+  Activity.fromSnapshotWithDate(snapshotData, DateTime actualDate) {
+    DateTime snapshotDate = snapshotData['rawDate'].toDate() ?? DateTime.now();
+
+    name = snapshotData['name'];
+    duration = Duration(minutes: snapshotData['duration'] ?? 60);
+    rawDate = DateTime(actualDate.year, actualDate.month, actualDate.day,
+        snapshotDate.hour, snapshotDate.minute);
     maxRegistered = snapshotData['maxRegistered'] ?? 20;
     registeredUsers = snapshotData['registeredUsers'] ?? [];
   }
