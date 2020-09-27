@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:state_management_ex1/activities/activity.dart';
-import 'package:state_management_ex1/activities/activityCard.dart';
+import 'package:state_management_ex1/activities/activity_card.dart';
 import 'package:state_management_ex1/models/parse_date.dart';
 import 'package:state_management_ex1/shared/constant.dart';
 
