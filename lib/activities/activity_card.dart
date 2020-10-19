@@ -4,9 +4,8 @@ import 'package:state_management_ex1/models/auth.dart';
 
 class ActivityCard extends StatefulWidget {
   final Activity activity;
-  final DateTime rawDate;
 
-  ActivityCard({Key key, this.activity, this.rawDate}) : super(key: key);
+  ActivityCard({Key key, this.activity}) : super(key: key);
 
   @override
   _ActivityCardState createState() => _ActivityCardState();
@@ -21,7 +20,7 @@ class _ActivityCardState extends State<ActivityCard> {
   @override
   void initState() {
     super.initState();
-    currentUserID = auth.getUser.uid;
+    currentUserID = auth.getUser.displayName;
     registered = widget.activity.registeredUsers.contains(currentUserID);
   }
 

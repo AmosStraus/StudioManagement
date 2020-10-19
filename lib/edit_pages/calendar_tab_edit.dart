@@ -1,19 +1,16 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:state_management_ex1/activities/calendar_activities.dart';
+import 'package:state_management_ex1/edit_pages/calendar_activities_edit.dart';
 import 'package:state_management_ex1/models/parse_date.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class CalendarTab extends StatefulWidget {
-  CalendarTab({Key key}) : super(key: key);
+class CalendarTabEdit extends StatefulWidget {
+  CalendarTabEdit({Key key}) : super(key: key);
 
   @override
-  _CalendarTabState createState() => _CalendarTabState();
+  _CalendarTabEditState createState() => _CalendarTabEditState();
 }
 
-class _CalendarTabState extends State<CalendarTab>
-    with TickerProviderStateMixin {
+class _CalendarTabEditState extends State<CalendarTabEdit> {
   final _calendarController = CalendarController();
   DateTime rawCurrDate;
 
@@ -25,13 +22,11 @@ class _CalendarTabState extends State<CalendarTab>
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
-    var welcomeString = user?.displayName ?? "Welcome!";
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          HeadLiner(rawCurrDate: rawCurrDate, welcomeString: welcomeString),
+          HeadLiner(rawCurrDate: rawCurrDate, welcomeString: 'מצב עריכה'),
           TableCalendar(
             initialCalendarFormat: CalendarFormat.twoWeeks,
             // availableCalendarFormats: const {CalendarFormat.week: ""},
@@ -59,7 +54,7 @@ class _CalendarTabState extends State<CalendarTab>
             },
           ),
           Expanded(
-            child: CalendarDayBuilder(
+            child: CalendarDayBuilderEdit(
               rawDate: _calendarController.focusedDay ?? DateTime.now(),
             ),
           ),
@@ -92,11 +87,11 @@ class HeadLiner extends StatelessWidget {
           ),
           child: Text(
               "בתאריך: ${parseDateToHebrew(rawDateToDateString(rawCurrDate))}",
-              style: TextStyle(fontSize: 18.0)),
+              style: TextStyle(fontSize: 20.0)),
         ),
         Text(
           "${welcomeString.substring(0, welcomeString.length > 20 ? 20 : welcomeString.length)}",
-          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
         ),
       ],
     );

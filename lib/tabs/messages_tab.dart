@@ -141,6 +141,10 @@ class _MessagesTabState extends State<MessagesTab>
         .get()
         .then((messages) {
       if (messages.docs != null) {
+        if (messages.docs.length > 2) {
+          lastMessage.add(
+              Message.fromSnapshot(messages.docs[messages.docs.length - 3]));
+        }
         if (messages.docs.length > 1) {
           lastMessage.add(
               Message.fromSnapshot(messages.docs[messages.docs.length - 2]));

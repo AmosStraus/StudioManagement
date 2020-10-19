@@ -3,6 +3,63 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:state_management_ex1/activities/activity.dart';
 import 'package:state_management_ex1/models/parse_date.dart';
 
+final Map<int, List<Activity>> schedulerLockdown = {
+  0: [
+    Activity(
+        name: "No Activity",
+        rawDate: DateTime(2020, 1, 1, 0, 0),
+        duration: Duration(hours: 24))
+  ],
+  1: [
+    Activity(
+        name: "ספארינג",
+        rawDate: DateTime(2020, 1, 1, 3, 0),
+        duration: Duration(minutes: 60)),
+  ],
+  2: [
+    Activity(
+        name: "כושר בשדה",
+        rawDate: DateTime(2020, 1, 1, 3, 0),
+        duration: Duration(minutes: 60)),
+    Activity(
+        name: "אימון בוגרים \n (ONLINE)",
+        rawDate: DateTime(2020, 1, 1, 17, 0),
+        duration: Duration(minutes: 60)),
+  ],
+  3: [
+    Activity(
+        name: "משימת אתגר \n (WHATSAPP)",
+        rawDate: DateTime(2020, 1, 1, 14, 0),
+        duration: Duration(minutes: 60)),
+  ],
+  4: [
+    Activity(
+        name: "ספארינג",
+        rawDate: DateTime(2020, 1, 1, 3, 0),
+        duration: Duration(minutes: 60)),
+    Activity(
+        name: "ג\'יו ג\'יטסו \n (ONLINE)",
+        rawDate: DateTime(2020, 1, 1, 17, 0),
+        duration: Duration(minutes: 60))
+  ],
+  5: [
+    Activity(
+        name: "כושר בשדה",
+        rawDate: DateTime(2020, 1, 1, 3, 0),
+        duration: Duration(minutes: 60)),
+  ],
+  6: [
+    Activity(
+        name: "ספארינג",
+        rawDate: DateTime(2020, 1, 1, 10, 15),
+        duration: Duration(minutes: 60)),
+    Activity(
+        name: "אימון בוגרים \n (ONLINE)",
+        rawDate: DateTime(2020, 1, 1, 11, 30),
+        duration: Duration(minutes: 60)),
+  ],
+};
+
 final Map<int, List<Activity>> schedulerLocal = {
   0: [
     Activity(
@@ -297,8 +354,8 @@ class DataFromServerInit {
 
   static pushScheduler() {
     for (int i = 0; i <= 7; ++i) {
-      if (schedulerLocal[i] != null) {
-        for (var activity in schedulerLocal[i]) {
+      if (schedulerLockdown[i] != null) {
+        for (var activity in schedulerLockdown[i]) {
           schedulerDB.doc('$i ${intToDay(i)}').set({
             'week day': activity.weekDay,
             'active day': activity.name != "No Activity",
@@ -318,13 +375,14 @@ class DataFromServerInit {
         }
       }
     }
+    schedulerDB.doc('latest_update').set({'latest_update': DateTime.now()});
   }
 
   static loadDB() async {
     // The idea here is to set the next 60 days but not overwrite existing days
     // Also considers Holidays that were stated in the Firebase
     DateTime latesetUpdate;
-    DateTime loadUntill = DateTime.now().add(Duration(days: 60));
+    DateTime loadUntill = DateTime.now().add(Duration(days: 30));
 
     await schedulerDB.doc('latest_update').get().then((snapshot) =>
         latesetUpdate = snapshot.data()['latest_update'].toDate());
@@ -346,7 +404,7 @@ class DataFromServerInit {
         print('${intToDay(weekDayIL(currentDate.weekday))} $dailyActivities');
         if (dailyActivities == null) {
           dailyActivities = [
-            (Activity.withHour(schedulerLocal[0][0], currentDate))
+            (Activity.withHour(schedulerLockdown[0][0], currentDate))
           ]; // class_slot_holiday
         }
         for (var activity in dailyActivities) {
@@ -376,16 +434,100 @@ class DataFromServerInit {
     }
   }
 
+  static Future<void> addNewActivityFromEditPanel(
+      rawDate, duration, maxRegistered, name) async {
+    if (name == null || name == '') {
+      name = rawDate.toString();
+    }
+    return await activeDB
+        .doc(rawDate.toString().substring(0, 10))
+        .collection('classes')
+        .doc(name)
+        .set({
+      'name': name,
+      'maxRegistered': maxRegistered,
+      'duration': duration,
+      'rawDate': rawDate,
+      'registeredUsers': []
+    }, SetOptions(merge: true));
+  }
+
+  static Future<void> deleteActivity(dateString, activityName) async {
+    return await activeDB
+        .doc(dateString)
+        .collection('classes')
+        .doc(activityName)
+        .delete();
+  }
+
+  static Future<void> updateActivity(
+      rawDate, duration, maxRegistered, name) async {
+    return await activeDB
+        .doc(rawDate.toString().substring(0, 10))
+        .collection('classes')
+        .doc(name)
+        .update({
+      'maxRegistered': maxRegistered,
+      'duration': duration,
+      'rawDate': rawDate,
+    });
+  }
+
   static Future<void> updateServerOnRegistration(
       String dateString, Activity activity, bool register, User user) async {
-    var f = register ? FieldValue.arrayUnion : FieldValue.arrayRemove;
+    var addOrRemove = register ? FieldValue.arrayUnion : FieldValue.arrayRemove;
 
     await activeDB
         .doc(dateString)
         .collection('classes')
         .doc(activity.name)
         .update({
-      'registeredUsers': f([user.uid])
+      'registeredUsers': addOrRemove([user?.displayName ?? user.uid])
+    });
+  }
+
+  static Future<void> removeUpcoming(
+      String dateString, String activityName, User user) async {
+    await activeDB
+        .doc(dateString)
+        .collection('classes')
+        .doc(activityName)
+        .update({
+      'registeredUsers': FieldValue.arrayRemove([user?.displayName ?? user.uid])
+    });
+  }
+
+  static Future<void> addUpcoming(
+      String dateString, String activityName, User user) async {
+    await activeDB
+        .doc(dateString)
+        .collection('classes')
+        .doc(activityName)
+        .update({
+      'registeredUsers': FieldValue.arrayUnion([user?.displayName ?? user.uid])
+    });
+  }
+
+
+    static Future<void> removeFromEdit(
+      String dateString, String activityName, String userName) async {
+    await activeDB
+        .doc(dateString)
+        .collection('classes')
+        .doc(activityName)
+        .update({
+      'registeredUsers': FieldValue.arrayRemove([userName])
+    });
+  }
+
+  static Future<void> addFromEdit(
+      String dateString, String activityName, String userName) async {
+    await activeDB
+        .doc(dateString)
+        .collection('classes')
+        .doc(activityName)
+        .update({
+      'registeredUsers': FieldValue.arrayUnion([userName])
     });
   }
 }

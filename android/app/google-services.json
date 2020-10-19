@@ -8,35 +8,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:707690108957:android:103e1c2e2cc651bdf6cef4",
-        "android_client_info": {
-          "package_name": "com.amosstraus.karnaf_yarok2"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "707690108957-0kd6jjnkgleqka3fbkq1ejrggavqr9le.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAU13S06Rh4xpy27TysuMxAPfp-osq6Eto"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "707690108957-0kd6jjnkgleqka3fbkq1ejrggavqr9le.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:707690108957:android:5a8b08d881ec24def6cef4",
         "android_client_info": {
           "package_name": "com.example.state_management_ex1"
@@ -80,6 +51,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "707690108957-8pdakn5gfitavem1h8luiq2gqe90u2cc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.karnafYarok",
+            "certificate_hash": "80add9241e0da325c9369e3f05511857dc3b97a1"
+          }
+        },
         {
           "client_id": "707690108957-gvms8b3mfnult7hkobf2ldd96su6atl1.apps.googleusercontent.com",
           "client_type": 1,

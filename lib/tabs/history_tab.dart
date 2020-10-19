@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:state_management_ex1/activities/upcoming_activity_tile.dart';
 import 'package:state_management_ex1/models/parse_date.dart';
 import 'package:state_management_ex1/shared/constant.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HistoryTab extends StatefulWidget {
   final user;
@@ -42,17 +43,26 @@ class _HistoryTabState extends State<HistoryTab> with TickerProviderStateMixin {
               textAlign: TextAlign.center,
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
-              color: Colors.blue[800],
+          MaterialButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.0),
             ),
-            child: Text('איתי: 052-5013431',
-                style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
+            color: Colors.blue[800],
+            child: Text(
+              'איתי: 052-5013431',
+              style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            ),
+            onPressed: () async {
+              // if (await canLaunch('tel:0525013431')) {
+              try {
+                await launch('tel:0525013431');
+              } catch (e) {
+                print('Could not launch');
+              }
+            },
           ),
           Text(":שיעורים עתידיים",
               style: TextStyle(fontSize: 20.0, fontStyle: FontStyle.italic)),
@@ -84,9 +94,12 @@ class _HistoryTabState extends State<HistoryTab> with TickerProviderStateMixin {
                           return dateStringComparator(
                               act1.split('_')[0], act2.split('_')[0]);
                         });
+                        var splittedData = snapshot.data[position].split('_');
                         return UpcomingActivityCard(
-                          date: snapshot.data[position].split('_')[0],
-                          name: snapshot.data[position].split('_')[1],
+                          rawDate: splittedData[0],
+                          name: splittedData[1],
+                          startTime:
+                              splittedData.length > 2 ? splittedData[2] : "",
                         );
                       }
                     },
@@ -107,12 +120,14 @@ class _HistoryTabState extends State<HistoryTab> with TickerProviderStateMixin {
         .doc("${widget.user.displayName}_${widget.user.uid}")
         .get()
         .then((snapshot) {
-      return snapshot.data()['classHistory'].map((t) => t).toList();
+      snapshot.data()['classHistory'].forEach((e) => print(e));
+      return snapshot.data()['classHistory'].toList();
     });
 
     // upcoming activity list:
     // first element is DATE
     // second is the name of activity
+    // filter the upcoming Dates
     upcomingList = mapFromServer.map((pair) {
       if (isUpComing(pair.keys.first)) {
         return pair.values.first;

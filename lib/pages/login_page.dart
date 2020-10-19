@@ -29,12 +29,12 @@ class _LoginState extends State<Login> {
             backgroundColor: Colors.green[200],
             appBar: AppBar(
               backgroundColor: Colors.green[600],
-              title: Text('Sign in to Karnaf Yarok'),
+              title: Text('התחברות לקרנף ירוק'),
               actions: [
                 FlatButton.icon(
                     onPressed: widget.toggleFunc,
                     icon: Icon(Icons.person),
-                    label: Text('Register'))
+                    label: Text('להרשמה'))
               ],
             ),
             body: Container(
@@ -54,10 +54,12 @@ class _LoginState extends State<Login> {
                       height: 20.0,
                     ),
                     TextFormField(
+                      textAlign: TextAlign.right,
                       decoration:
-                          textInputDecoration.copyWith(hintText: "Email"),
+                          textInputDecoration.copyWith(hintText: "אימייל"),
                       style: TextStyle(fontSize: 20.0),
-                      validator: (val) => val.isEmpty ? "Enter an email" : null,
+                      validator: (val) =>
+                          val.isEmpty ? "הכנס כתובת מייל" : null,
                       onChanged: (val) {
                         setState(() => email = val);
                       },
@@ -66,12 +68,12 @@ class _LoginState extends State<Login> {
                       height: 20.0,
                     ),
                     TextFormField(
+                      textAlign: TextAlign.right,
                       decoration:
-                          textInputDecoration.copyWith(hintText: "Password"),
+                          textInputDecoration.copyWith(hintText: "סיסמה"),
                       style: TextStyle(fontSize: 20.0),
-                      validator: (val) => val.length < 6
-                          ? "Enter password at least 6 chars"
-                          : null,
+                      validator: (val) =>
+                          val.length < 6 ? "סיסמה באורך לפחות 6 תווים" : null,
                       onChanged: (val) {
                         // for password
                         setState(() => password = val);
@@ -84,7 +86,7 @@ class _LoginState extends State<Login> {
                     RaisedButton(
                       color: Colors.brown,
                       child: Text(
-                        "Sign in",
+                        "התחבר",
                         style: TextStyle(color: Colors.white, fontSize: 20.0),
                       ),
                       onPressed: () async {
@@ -95,7 +97,7 @@ class _LoginState extends State<Login> {
                                   email.trim(), password.trim());
                           if (result == null && this.mounted) {
                             setState(() {
-                              error = "Invalid user or password";
+                              error = "שם משתמש או סיסמה לא תקינים";
                               loading = false;
                             });
                           }
@@ -114,7 +116,6 @@ class _LoginState extends State<Login> {
                       error,
                       style: TextStyle(color: Colors.red, fontSize: 20.0),
                     ),
-                    // anonymousLoginButton()
                   ],
                 ),
               ),

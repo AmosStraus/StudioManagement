@@ -1,19 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:state_management_ex1/activities/activity.dart';
-import 'package:state_management_ex1/activities/activity_card.dart';
+import 'package:state_management_ex1/edit_pages/activity_card_edit.dart';
+import 'package:state_management_ex1/edit_pages/edit_activity.dart';
 import 'package:state_management_ex1/models/parse_date.dart';
 import 'package:state_management_ex1/shared/constant.dart';
 
-class CalendarDayBuilder extends StatefulWidget {
+class CalendarDayBuilderEdit extends StatefulWidget {
   final DateTime rawDate;
-  CalendarDayBuilder({this.rawDate});
+  CalendarDayBuilderEdit({this.rawDate});
 
   @override
-  _CalendarDayBuilderState createState() => _CalendarDayBuilderState();
+  _CalendarDayBuilderEditState createState() => _CalendarDayBuilderEditState();
 }
 
-class _CalendarDayBuilderState extends State<CalendarDayBuilder> {
+class _CalendarDayBuilderEditState extends State<CalendarDayBuilderEdit> {
   List<Activity> dailyActivities;
   @override
   void initState() {
@@ -33,6 +34,20 @@ class _CalendarDayBuilderState extends State<CalendarDayBuilder> {
         } else {
           return Column(
             children: [
+              RaisedButton(
+                child: Text("הוספת שיעור היום",
+                    style:
+                        TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => EditActivity(
+                              date: widget.rawDate,
+                              add: true,
+                              updateEdit: updateEdit)));
+                },
+              ),
               classlistView(snapshot, widget.rawDate),
             ],
           );
@@ -72,12 +87,17 @@ class _CalendarDayBuilderState extends State<CalendarDayBuilder> {
       return Expanded(
         child: ListView.builder(
           shrinkWrap: true,
-          itemBuilder: (context, position) => ActivityCard(
-              activity: listSnapshot.data[position]),
+          itemBuilder: (context, position) => ActivityCardEdit(
+              activity: listSnapshot.data[position],
+              updateParentView: updateEdit),
           itemCount: listSnapshot.data?.length ?? 0,
         ),
       );
     }
+  }
+
+  updateEdit() {
+    setState(() {});
   }
 }
 

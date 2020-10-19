@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class InfoTab extends StatefulWidget {
   const InfoTab({Key key}) : super(key: key);
@@ -10,51 +11,92 @@ class InfoTab extends StatefulWidget {
 }
 
 class _InfoTabState extends State<InfoTab> {
-  final _formKey = GlobalKey<FormState>();
-
-  // text field state
-  String name = "";
-  String email = "";
-  String password = "";
-  String msg = "";
-
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
-    return Scaffold(
-      backgroundColor: Colors.green[200],
-      appBar: AppBar(
-        backgroundColor: Colors.green[600],
-        title: Text('Sign up to Karnaf Yarok'),
-      ),
-      body: Container(
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 60),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: <Widget>[
-              if (user.photoURL != null)
-                Image.network(
-                  "${user.photoURL}",
-                  scale: 0.1,
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.fitHeight,
-                ),
-              SizedBox(
-                height: 20.0,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView(
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              user.photoURL != null
+                  ? Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Image.network(
+                        "${user.photoURL}",
+                        scale: 0.1,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.fitHeight,
+                      ),
+                    )
+                  : Container(),
+              Column(
+                children: [
+                  Text(
+                    "שלום",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    "${user?.displayName ?? ""}",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
               ),
-              RaisedButton(
-                onPressed: () async {
-                  var res = await user.getIdTokenResult();
-                  print(res.token);
-                  setState(() {});
-                },
-              ),
-              Text("$msg"),
             ],
           ),
-        ),
+          SizedBox(height: 20.0),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: MaterialButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18.0),
+              ),
+              color: Colors.blue[800],
+              child: Text(
+                'טופס אימוני כושר',
+                style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              onPressed: () async {
+                // if (await canLaunch('tel:0525013431')) {
+                try {
+                  await launch(
+                      'https://docs.google.com/spreadsheets/d/1r-KirLxAhj3yAwcoqjOJRDTViMy7ZoNrReo2lxXLe3E/edit?usp=drivesdk');
+                } catch (e) {
+                  print('Could not launch');
+                }
+              },
+            ),
+          ),
+          SizedBox(height: 20.0),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: MaterialButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.0),
+                ),
+                color: Colors.blue[800],
+                child: Text(
+                  'לאתר אינטרנט',
+                  style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+                onPressed: () async {
+                  try {
+                    await launch('https://www.team-straus.com');
+                  } catch (e) {
+                    print('Could not launch');
+                  }
+                }),
+          ),
+        ],
       ),
     );
   }

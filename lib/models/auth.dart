@@ -7,6 +7,7 @@ import 'package:state_management_ex1/models/parse_date.dart';
 
 /// This is where we define methods to interact with firebase auth for us ///
 class AuthService {
+  var userName;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Firebase user one-time fetch
@@ -14,6 +15,7 @@ class AuthService {
   // auth change user stream. when everthe user signs in or out we get respose
   // down the stream. "null" for signed out. user object mapped on sign in.
   Stream<User> get user => _auth.authStateChanges();
+  Stream<User> get tokenChanges => _auth.idTokenChanges();
 
   // sign in anonymously
   Future<User> signInAnonymously() async {
@@ -61,6 +63,8 @@ class AuthService {
       // Update user data
       await createUserWithData(result.user, name);
       await result.user.updateProfile(displayName: name);
+      userName = name;
+
       return (result.user);
     } catch (e) {
       print("ERROR " + e.toString());
@@ -153,9 +157,41 @@ class AuthService {
     await DataFromServerInit.updateServerOnRegistration(
         activity.dateString, activity, register, getUser);
 
+    // Document in USER REPORT. format: DATE_ACTIVITYNAME_DURATION
     await reportClassRef.update({
       'classHistory': addOrRemove([
-        {'${activity.rawDate}': "${activity.dateString}_${activity.name}"}
+        {'${activity.rawDate}': "${activity.rawDate}_${activity.name}"}
+      ])
+    });
+  }
+
+  Future<void> removeFromUpcoming(date, name) async {
+    print('$date $name');
+    DocumentReference reportClassRef = FirebaseFirestore.instance
+        .collection('Reports')
+        .doc("${getUser.displayName}_${getUser.uid}");
+
+    await DataFromServerInit.removeUpcoming(
+        date.substring(0, 10), name, getUser);
+
+    await reportClassRef.update({
+      'classHistory': FieldValue.arrayRemove([
+        {'$date': "${date}_$name"}
+      ])
+    });
+  }
+
+  Future<void> addFromUpcoming(date, name) async {
+    print('$date $name');
+    DocumentReference reportClassRef = FirebaseFirestore.instance
+        .collection('Reports')
+        .doc("${getUser.displayName}_${getUser.uid}");
+
+    await DataFromServerInit.addUpcoming(date.substring(0, 10), name, getUser);
+
+    await reportClassRef.update({
+      'classHistory': FieldValue.arrayUnion([
+        {'$date': "${date}_$name"}
       ])
     });
   }

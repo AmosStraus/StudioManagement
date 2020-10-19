@@ -10,7 +10,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   // await DataFromServerInit.pushScheduler();
-  // await DataFromServerInit.loadScheduler();
   await DataFromServerInit.loadDB();
   // PushNotificationService _pns = PushNotificationService();
   // await _pns.initialize();

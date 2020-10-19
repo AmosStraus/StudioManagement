@@ -29,12 +29,12 @@ class _RegisterState extends State<Register> {
             backgroundColor: Colors.green[200],
             appBar: AppBar(
               backgroundColor: Colors.green[600],
-              title: Text('Sign up to Karnaf Yarok'),
+              title: Text('הרשמה לקרנף ירוק'),
               actions: [
                 FlatButton.icon(
                     onPressed: widget.toggleFunc,
                     icon: Icon(Icons.person_pin),
-                    label: Text('Sign in'))
+                    label: Text('להתחברות'))
               ],
             ),
             body: Container(
@@ -54,10 +54,11 @@ class _RegisterState extends State<Register> {
                       height: 20.0,
                     ),
                     TextFormField(
+                      textAlign: TextAlign.right,
                       decoration:
-                          textInputDecoration.copyWith(hintText: 'Email'),
+                          textInputDecoration.copyWith(hintText: 'אימייל'),
                       style: TextStyle(fontSize: 20.0),
-                      validator: (val) => val.isEmpty ? "Enter an email" : null,
+                      validator: (val) => val.isEmpty ? "הכנס מייל" : null,
                       onChanged: (val) {
                         setState(() => email = val);
                       },
@@ -66,28 +67,27 @@ class _RegisterState extends State<Register> {
                       height: 20.0,
                     ),
                     TextFormField(
+                      textAlign: TextAlign.right,
                       decoration:
-                          textInputDecoration.copyWith(hintText: 'Password'),
+                          textInputDecoration.copyWith(hintText: 'סיסמה'),
                       style: TextStyle(fontSize: 20.0),
-                      validator: (val) => val.length < 6
-                          ? "Enter password at least 6 chars"
-                          : null,
+                      validator: (val) =>
+                          val.length < 6 ? "סיסמה באורך 6 לפחות" : null,
                       onChanged: (val) {
                         // for password
                         setState(() => password = val);
-                        print(val);
                       },
-                      obscureText: false,
+                      obscureText: true,
                     ),
                     SizedBox(
                       height: 20.0,
                     ),
                     TextFormField(
+                      textAlign: TextAlign.right,
                       decoration:
-                          textInputDecoration.copyWith(hintText: 'Username'),
+                          textInputDecoration.copyWith(hintText: 'שם המתאמן'),
                       style: TextStyle(fontSize: 20.0),
-                      validator: (val) =>
-                          val.isEmpty ? "Enter your name" : null,
+                      validator: (val) => val.isEmpty ? "הכנס את שמך" : null,
                       onChanged: (val) {
                         setState(() => name = val);
                       },
@@ -98,7 +98,7 @@ class _RegisterState extends State<Register> {
                     RaisedButton(
                       color: Colors.brown,
                       child: Text(
-                        "Register",
+                        "הרשם",
                         style: TextStyle(color: Colors.white, fontSize: 20.0),
                       ),
                       onPressed: () async {
@@ -107,12 +107,14 @@ class _RegisterState extends State<Register> {
                           dynamic result =
                               await _auth.registerWithEmailAndPassword(
                                   email.trim(), password.trim(), name.trim());
-                          if (result == null) {
+                          if (result == null && this.mounted) {
                             setState(() {
                               error =
-                                  "invalid email \n(if you're already registered sign in)";
+                                  "מייל לא תקין \n(אם אתה כבר רשום עבור להתחברות)";
                               loading = false;
                             });
+                          } else {
+                            setState(() => loading = false);
                           }
                         }
                       },
@@ -127,12 +129,6 @@ class _RegisterState extends State<Register> {
                     ),
                     Text(error,
                         style: TextStyle(color: Colors.red, fontSize: 20.0)),
-                    //   RaisedButton(
-                    //     child: Text("Anon"),
-                    //     onPressed: () async {
-                    //       await _auth.signInAnonymously();
-                    //     },
-                    //   )
                   ],
                 ),
               ),
